@@ -1,2 +1,6 @@
 /.env
 /errors.log
+*.sqlite
+*.db
+database/*.sqlite
+database/db.sqlite
