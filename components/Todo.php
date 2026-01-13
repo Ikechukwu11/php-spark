@@ -40,8 +40,10 @@ return function ($compId, $snapshot = ['todos' => [], 'newTask' => '']) {
             <ul>
                 <?php foreach ($todos as $t): ?>
                     <li>
-                        <input type="checkbox" <?= $t['completed'] ? 'checked' : '' ?> spark:click="toggle" data-id="<?= $t['id'] ?>" />
-                        <?= htmlspecialchars($t['title']) ?>
+                        <div>
+                            <input type="checkbox" <?= $t['completed'] ? 'checked' : '' ?> spark:click="toggle" data-id="<?= $t['id'] ?>" />
+                            <?= htmlspecialchars($t['title']) ?>
+                        </div>
                         <button spark:click="delete" data-id="<?= $t['id'] ?>">×</button>
                     </li>
                 <?php endforeach; ?>

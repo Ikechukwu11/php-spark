@@ -58,7 +58,7 @@ if (!file_exists($page)) {
   http_response_code(404);
   exit("Page not found");
 }
-ob_start();
+//ob_start();
 require $page;
-$content = ob_get_clean();
-layout(fn() => print $content);
+//$content = ob_get_clean();
+//layout(fn() => print $content);

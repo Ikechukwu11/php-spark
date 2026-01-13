@@ -83,7 +83,15 @@ const res = await fetch("/", {
 // Update component HTML and snapshot
 comp.innerHTML = res.html;
 comp.dataset.snapshot = JSON.stringify(res.snapshot || snapshot);
-
+// 🔥 Handle global events (hybrid re-render)
+if (res.events) res.events.forEach(ev => {
+    document.querySelectorAll("[data-spark]").forEach(c => {
+        if (c.dataset.spark === ev.component) {
+            // Trigger re-fetch/render for the component
+            // You can implement a small pub/sub here
+        }
+    });
+});
 return; // stop here
 }
 

@@ -1,6 +1,5 @@
 <?php
-
-function layout(callable $slot)
+function layout(callable $slot, ?callable $navbar = null, ?callable $footer = null)
 { ?>
     <!DOCTYPE html>
     <html>
@@ -19,8 +18,14 @@ function layout(callable $slot)
 
     <body>
 
+
         <div id="app">
+            <?php if ($navbar) echo $navbar(); ?>
+
             <?php $slot(); ?>
+
+            <?php if ($footer) echo $footer(); ?>
+
         </div>
 
     </body>

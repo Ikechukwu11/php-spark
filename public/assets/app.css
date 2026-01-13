@@ -1,1 +1,105 @@
-body { font-family: sans-serif; }
+body {
+  font-family: sans-serif;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #fff;
+  margin:-20px ;
+}
+
+.btn-counter {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+}
+
+.btn-counter:hover {
+  background-color: #eee;
+}
+
+.btn-counter:first-of-type {
+  background-color: #cf0909ff;
+}
+
+.btn-counter:last-of-type {
+  background-color: #09cf09ff;
+}
+
+.comp {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.todo-component {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.todo-component input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  width: 70%;
+}
+
+.todo-component button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background-color: #0a559bff;
+  color: #fff;
+  width: 20%;
+}
+
+.todo-component ul {
+  list-style: none;
+  padding: 0;
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.todo-component ul li {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ccc;
+  padding: 5px 0;
+}
+
+.todo-component ul li [type="checkbox"] {
+  width: 10px;
+}
+
+.todo-component ul li div {
+  display: flex;
+  align-items: center;
+  width: 90%;
+  gap: 10px;
+}
+
+.todo-component ul li button {
+  background-color: tomato;
+  border-radius: 50%;
+  display: flex;
+  padding: 0;
+  height: 35px;
+  width: 35px;
+  justify-content: center;
+  align-items: center;
+}
