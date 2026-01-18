@@ -12,7 +12,10 @@ nav {
   margin-bottom: 20px;
   padding: 10px;
   background-color: #fff;
-  margin:-20px ;
+  margin: -20px;
+  padding: 20px;
+  margin-bottom: 10px;
+  border-bottom: 3px solid #ccc;
 }
 
 .btn-counter {
@@ -102,4 +105,31 @@ nav {
   width: 35px;
   justify-content: center;
   align-items: center;
+}
+.pagination {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.pagination button {
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 4px;
+  color: #1e2d3b !important;
+  padding: 10px;
+  cursor: pointer;
+  height: 30px;
+  width: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.pagination .current {
+  background: #1e2d3b;
+  color: #fff !important;
+}
+.pagination button:disabled {
+    opacity: 0.5;
 }

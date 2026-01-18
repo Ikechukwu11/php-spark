@@ -1,5 +1,8 @@
 <?php
-function e($str) { return htmlspecialchars($str); }
+function e($str)
+{
+  return htmlspecialchars($str);
+}
 
 
 if (!function_exists('dd')) {
@@ -67,4 +70,66 @@ if (!function_exists('dd')) {
         return "<span style=\"{$styles['default']}\">" . htmlspecialchars(print_r($var, true)) . "</span>";
     }
   }
+}
+
+
+function paginate_apply(
+  array &$snapshot,
+  callable $query,
+  int $perPage = 10,
+  string $dataKey = 'data',
+  string $metaKey = 'meta'
+) {
+  $page = max(1, (int)($snapshot['page'] ?? 1));
+
+  $res = $query($page, $perPage);
+
+  $snapshot[$dataKey] = $res['data'];
+  $snapshot[$metaKey] = $res['meta'];
+  $snapshot['page']   = $page;
+}
+
+function pagination(array &$snapshot, string $action = 'paginate')
+{
+  if (($snapshot['meta']['pages'] ?? 1) <= 1) return;
+
+  $p = $snapshot['meta']['page'];
+  $pages = $snapshot['meta']['pages'];
+
+  $start = max(1, $p - 2);
+  $end   = min($pages, $p + 2);
+?>
+  <div class="pagination" data-spark-key="pagination">
+
+    <!-- First -->
+    <button
+      <?= $p <= 1 ? 'disabled' : '' ?>
+      <?= $p <= 1 ? '' : 'spark:click="' . $action . '" data-page="1"' ?>>« </button>
+
+    <!-- Prev -->
+    <button
+      <?= $p <= 1 ? 'disabled' : '' ?>
+      <?= $p <= 1 ? '' : 'spark:click="' . $action . '" data-page="' . ($p - 1) . '"' ?>>‹ </button>
+
+    <!-- Page numbers -->
+    <?php for ($i = $start; $i <= $end; $i++): ?>
+      <?php if ($i == $p): ?>
+        <button class="current" data-active-page><?= $i ?></button>
+      <?php else: ?>
+        <button spark:click="<?= $action ?>" data-page="<?= $i ?>"><?= $i ?></button>
+      <?php endif; ?>
+    <?php endfor; ?>
+
+    <!-- Next -->
+    <button
+      <?= $p >= $pages ? 'disabled' : '' ?>
+      <?= $p >= $pages ? '' : 'spark:click="' . $action . '" data-page="' . ($p + 1) . '"' ?>> ›</button>
+
+    <!-- Last -->
+    <button
+      <?= $p >= $pages ? 'disabled' : '' ?>
+      <?= $p >= $pages ? '' : 'spark:click="' . $action . '" data-page="' . $pages . '"' ?>> »</button>
+
+  </div>
+<?php
 }
