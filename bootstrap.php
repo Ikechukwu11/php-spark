@@ -35,8 +35,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_SERVER['HTTP_X_SPARK'] ?? null))
     // Load component file from components directory
     $componentFile = __DIR__ . "/components/{$data['component']}.php";
     if (!file_exists($componentFile)) {
+      try {
+        $componentFile = __DIR__ . "/components/{$data['component']}/index.php";
+      } catch (\Throwable $th) {
+        //throw $th;
       echo json_encode(['html' => 'Component not found', 'snapshot' => [], 'events' => []]);
-      exit;
+        exit;
+    }
     }
 
     // Component file should return a closure

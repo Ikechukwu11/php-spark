@@ -3,6 +3,14 @@ function spark_component($name, $snapshot = [])
 {
     $id = uniqid($name . '_');
     $file = __DIR__ . "/../components/$name.php";
+    if (!file_exists($file)) {
+        try {
+            $file = __DIR__ . "/../components/$name/index.php";
+        } catch (\Throwable $th) {
+            //throw $th;
+            echo json_encode(['html' => 'Component not found', 'snapshot' => [], 'events' => []]);
+        }
+    }
     $component = require $file;
 
     ob_start();

@@ -31,18 +31,15 @@ function todo_find($id)
   return model_find('todos', $id);
 }
 
-function todo_paginate($page = 1, $perPage = 10, $search='', $where = '1')
+function todo_paginate($page = 1, $perPage = 10, $searchKey = '', $searchTerm = '')
 {
-  switch ($search) {
-    case 'search':
-    case 's':
-    case 'searchTerm':
-      $where = "WHERE title LIKE '%$search%'";
-      break;
+  $where = '1';
 
-    default:
-      $where = "WHERE 1";
-      break;
+  if (in_array($searchKey, ['search', 's', 'searchTerm'], true) && $searchTerm !== '') {
+    // basic escaping (better: prepared statements in model_paginate)
+    $searchTerm = addslashes($searchTerm);
+    $where = "title LIKE '%{$searchTerm}%'";
   }
-  return model_paginate('todos', '1', $page, $perPage);
+
+  return model_paginate('todos', $where, $page, $perPage);
 }
