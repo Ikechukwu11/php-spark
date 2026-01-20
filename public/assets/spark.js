@@ -108,14 +108,28 @@ if (btn) {
 
 
 // ---------- SPA NAVIGATION ----------
-const link = e.target.closest("[spark\\:navigate]");
+const link =
+  e.target.closest("[spark\\:navigate]") ||
+  e.target.closest("[spark\\:navigate\\.hover]");
 if (link) {
-e.preventDefault();
-const href = link.getAttribute("href");
+  console.log(link);
+  e.preventDefault();
+  const href = link.getAttribute("href");
+    const app = document.getElementById("app");
+    let html;
 
-const res = await fetch(href, { headers: { "X-Spark": "1" } });
-document.getElementById("app").innerHTML = await res.text();
-history.pushState({}, "", href);
+if (prefetchCache[href]) {
+    html = prefetchCache[href]; // use prefetched HTML
+  } else {
+  const res = await fetch(href, { headers: { "X-Spark": "1" } });
+  html = await res.text();
+  }
+
+  app.innerHTML = html;
+  history.pushState({}, "", href);
+
+  // 🔥 Re-run lazy hydration for any new components
+  lazyLoad();
 }
 });
 
@@ -200,6 +214,27 @@ const res = await fetch("/", {
 comp.innerHTML = res.html;
 comp.dataset.snapshot = JSON.stringify(res.snapshot || snapshot);
 });
+
+//----------- PREFETCH ON HOVER -----------------
+document.addEventListener("mouseover", (e) => {
+  const link = e.target.closest("[spark\\:navigate\\.hover]");
+  if (!link) return;
+
+  const url = link.getAttribute("href");
+  if (!url) return;
+
+  // Delay prefetch to avoid unnecessary network requests
+  clearTimeout(link._prefetchTimer);
+  link._prefetchTimer = setTimeout(() => {
+    prefetchPage(url);
+  }, 200); // 100ms delay
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
+lazyLoad()
+});
+
 
 // ----------------- DOM DIFFING -----------------
 function preserveInput(oldNode, newNode) {
@@ -297,8 +332,98 @@ function patchKeys(oldRoot, newRoot) {
   Object.values(oldMap).forEach((el) => el.remove());
 }
 
+function lazyLoad(root = document) {
+  // Find all placeholders
+  const lazyPlaceholders = document.querySelectorAll("[spark\\:lazy]");
+
+  lazyPlaceholders.forEach((el) => {
+    el.classList.add("spark-lazy","is-loading");
+    const lazyConfig = JSON.parse(el.dataset.lazy || "{}");
+    const componentName = el.dataset.component;
+    const snapshot = JSON.parse(el.dataset.snapshot || "{}");
+
+    // Determine trigger
+    const trigger = lazyConfig.on || "idle";
+
+    const hydrate = async () => {
+      // Fetch rendered component from server
+      const res = await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Spark": "1" },
+        body: JSON.stringify({
+          _spark: 1,
+          component: componentName,
+          id: el.id,
+          snapshot,
+          action: "__hydrate",
+          payload: [],
+        }),
+      });
+      const data = await res.json();
+
+      // Replace skeleton with real component
+      // -------------------------------
+      // Full replacement on first hydration
+      // -------------------------------
+      // Replace skeleton with full component
+      // el.innerHTML = data.html;
+
+      const content = el.querySelector(".spark-content-layer");
+      content.innerHTML = data.html;
+
+      // Attach snapshot and any required props for Spark
+      el.dataset.snapshot = JSON.stringify(data.snapshot || snapshot);
+      el.classList.remove("spark-lazy","is-loading");
+      el.classList.add("spark-lazy","is-ready");
+
+    };
+
+    // -------------------- Trigger Handling --------------------
+    if (trigger === "idle") {
+      // Wait until browser is idle
+      if ("requestIdleCallback" in window) {
+        requestIdleCallback(hydrate);
+      } else {
+        setTimeout(hydrate, 100); // fallback
+      }
+    } else if (trigger === "visible") {
+      // Use IntersectionObserver to hydrate when visible
+      const io = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          hydrate();
+          io.disconnect();
+        }
+      });
+      io.observe(el);
+    } else if (trigger === "manual") {
+      // Leave for manual hydration (can call hydrate() later)
+      el.hydrate = hydrate;
+    } else {
+      // default immediate hydration
+      hydrate();
+    }
+  });
+}
+
+const prefetchCache = {};
+
+async function prefetchPage(url) {
+  if (prefetchCache[url]) return; // already prefetched
+  try {
+    const res = await fetch(url, { headers: { "X-Spark": "1" } });
+    const html = await res.text();
+    prefetchCache[url] = html;
+  } catch (err) {
+    console.error("Prefetch failed for", url, err);
+  }
+}
+
+
 
 window.addEventListener("popstate", async () => {
-const res = await fetch(location.pathname, { headers: { "X-Spark": "1" } });
-document.getElementById("app").innerHTML = await res.text();
+  const res = await fetch(location.pathname, { headers: { "X-Spark": "1" } });
+  document.getElementById("app").innerHTML = await res.text();
+
+  // Re-run lazy hydration for the new content
+  lazyLoad();
 });

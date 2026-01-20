@@ -1,5 +1,4 @@
 <?php
-
 function todo_actions(array &$snapshot, callable $paginateCallback)
 {
   $todos   = &$snapshot['todos'];
@@ -14,7 +13,11 @@ function todo_actions(array &$snapshot, callable $paginateCallback)
     $newTask = '';
 
     state('todos_count', 'global', count($todos));
-    emit_refresh_once([['component' => 'Navbar', 'snapshot' => []]]);
+    emit_refresh_once([
+      ['component' => 'Navbar', 'snapshot' => []],
+      ['component' => 'Dashboard', 'snapshot' => []],
+    ]);
+
 
     paginate_apply($snapshot, $paginateCallback, 5, 'todos', 'meta');
   });
@@ -30,6 +33,9 @@ function todo_actions(array &$snapshot, callable $paginateCallback)
     foreach ($todos as &$t) {
       if ($t['id'] == $todo['id']) $t = $todo;
     }
+    emit_refresh_once([
+      ['component' => 'Dashboard', 'snapshot' => []],
+    ]);
   });
 
   // Delete
@@ -41,7 +47,11 @@ function todo_actions(array &$snapshot, callable $paginateCallback)
     $todos = array_values(array_filter($todos, fn($t) => $t['id'] != $payload));
 
     state('todos_count', 'global', count($todos));
-    emit_refresh_once([['component' => 'Navbar', 'snapshot' => []]]);
+    emit_refresh_once([
+      ['component' => 'Navbar', 'snapshot' => []],
+      ['component' => 'Dashboard', 'snapshot' => []],
+    ]);
+
 
     paginate_apply($snapshot, $paginateCallback, 5, 'todos', 'meta');
   });

@@ -43,3 +43,13 @@ function todo_paginate($page = 1, $perPage = 10, $searchKey = '', $searchTerm = 
 
   return model_paginate('todos', $where, $page, $perPage);
 }
+
+
+function todo_stats(): array
+{
+  return [
+    'total'       => model_count('todos'),
+    'completed'   => model_count('todos', 'completed = ?', [1]),
+    'uncompleted' => model_count('todos', 'completed = ?', [0]),
+  ];
+}

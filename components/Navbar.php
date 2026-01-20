@@ -10,9 +10,9 @@ return function ($compId, $snapshot = []) {
 
   render(function () use ($notifCount, $compId) { ?>
     <nav data-spark-id="<?= $compId ?>" class="navbar-component">
-      <a href="/" spark:navigate>Home</a> |
-      <a href="/about" spark:navigate>About</a> |
-      <a href="/dashboard" spark:navigate>Dashboard</a>
+      <a href="/" spark:navigate.hover>Home</a> |
+      <a href="/about" spark:navigate.hover>About</a> |
+      <a href="/dashboard" spark:navigate.hover>Dashboard</a>
       <span style="float:right;font-weight:bold;margin-left:20px;">
         Todos: <?= $notifCount ?>
       </span>

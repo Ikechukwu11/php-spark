@@ -43,7 +43,13 @@ function emit_refresh_once(array $components)
 
     foreach ($components as &$c) {
         $file = __DIR__ . '/../components/' . $c['component'] . '.php';
-        if (!file_exists($file)) continue;
+        if (!file_exists($file)){
+        try {
+            $file = __DIR__ . "/../components/".$c['component']."/index.php";
+        } catch (\Throwable $th) {
+            continue;
+        }
+        }
         $component = require $file;
 
         // Save the global render queue and isolate

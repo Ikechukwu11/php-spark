@@ -39,6 +39,112 @@ function model_select(string $table, string $where = '1', array $params = []): a
   return db_query("SELECT * FROM $table WHERE $where", $params)->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function model_count(string $table, string $where = '1', array $params = []): int
+{
+  $stmt = db_query(
+    "SELECT COUNT(*) AS count FROM $table WHERE $where",
+    $params
+  );
+
+  return (int) $stmt->fetchColumn();
+}
+
+function model_count_where(string $table, array $conditions): int
+{
+  $where = [];
+  $params = [];
+
+  foreach ($conditions as $col => $val) {
+    $where[] = "$col = ?";
+    $params[] = $val;
+  }
+
+  return model_count(
+    $table,
+    implode(' AND ', $where),
+    $params
+  );
+}
+
+function model_exists(string $table, string $where = '1', array $params = []): bool
+{
+  $stmt = db_query(
+    "SELECT 1 FROM $table WHERE $where LIMIT 1",
+    $params
+  );
+
+  return (bool) $stmt->fetchColumn();
+}
+
+function model_sum(
+  string $table,
+  string $column,
+  string $where = '1',
+  array $params = []
+): float {
+  $stmt = db_query(
+    "SELECT COALESCE(SUM($column), 0) FROM $table WHERE $where",
+    $params
+  );
+
+  return (float) $stmt->fetchColumn();
+}
+function model_avg(
+  string $table,
+  string $column,
+  string $where = '1',
+  array $params = []
+): float {
+  $stmt = db_query(
+    "SELECT COALESCE(AVG($column), 0) FROM $table WHERE $where",
+    $params
+  );
+
+  return (float) $stmt->fetchColumn();
+}
+
+function model_max(
+  string $table,
+  string $column,
+  string $where = '1',
+  array $params = []
+): float {
+  return (float) db_query(
+    "SELECT COALESCE(MAX($column), 0) FROM $table WHERE $where",
+    $params
+  )->fetchColumn();
+}
+
+function model_min(
+  string $table,
+  string $column,
+  string $where = '1',
+  array $params = []
+): float {
+  return (float) db_query(
+    "SELECT COALESCE(MIN($column), 0) FROM $table WHERE $where",
+    $params
+  )->fetchColumn();
+}
+
+
+
+function model_pluck(
+  string $table,
+  string $column,
+  string $where = '1',
+  array $params = []
+): array {
+  $stmt = db_query(
+    "SELECT $column FROM $table WHERE $where",
+    $params
+  );
+
+  return array_column($stmt->fetchAll(PDO::FETCH_ASSOC), $column);
+}
+
+
+
 function model_paginate(string $table, ?string $where = '1', int $page = 1, int $perPage = 10): array
 {
   $page = max(1, $page);

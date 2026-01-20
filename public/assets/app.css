@@ -133,3 +133,146 @@ nav {
 .pagination button:disabled {
     opacity: 0.5;
 }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.06);
+}
+
+.stat-card strong {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-card span {
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+
+/* Default lazy transition */
+[spark\\:lazy] {
+  opacity: 1;
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+[spark\\:lazy].is-loading {
+  opacity: 0.5;
+}
+
+[spark\\:lazy].is-ready {
+  opacity: 1;
+  transform: none;
+}
+
+
+/* Slide up */
+[spark\\:lazy][data-transition="slide-up"].is-loading {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+[spark\\:lazy][data-transition="slide-up"].is-ready {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Scale in */
+[spark\\:lazy][data-transition="scale"].is-loading {
+  opacity: 0;
+  transform: scale(0.96);
+}
+
+[spark\\:lazy][data-transition="scale"].is-ready {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [spark\\:lazy],
+  .spark-skeleton-layer,
+  .spark-content-layer {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+.spark-skeleton-layer {
+  opacity: 1;
+  transition: opacity 250ms ease;
+}
+
+.spark-content-layer {
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+
+.spark-lazy.is-ready .spark-skeleton-layer {
+  opacity: 0!important;
+  display: none;
+  pointer-events: none;
+}
+
+.spark-lazy.is-ready .spark-content-layer {
+  opacity: 1!important;
+}
+
+
+.skeleton {
+    /* 1. Use a gradient instead of a solid color */
+    background: linear-gradient(
+        90deg,
+        #ececec 25%,
+        #f5f5f5 50%,
+        #ececec 75%
+    );
+
+    /* 2. Make background twice the width of the element */
+    background-size: 200% 100%;
+
+    border-radius: 4px;
+    margin: 4px 0;
+    min-height: 20px;
+
+    /* 3. Keep your animation settings */
+    animation: shimmer 1.5s infinite linear;
+}
+
+.skeleton-card {
+    height: 80px;
+    margin-bottom: 12px;
+}
+
+.skeleton-todo {
+    height: 24px;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
