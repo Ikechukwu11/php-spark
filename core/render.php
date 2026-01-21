@@ -19,6 +19,7 @@ function render_page(string $file)
     // Compile JSX-like components
     $compiled = spark_compile_components($source);
 
+
     // Execute compiled PHP
     eval('?>' . $compiled);
 }
