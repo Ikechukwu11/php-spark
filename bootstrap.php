@@ -15,6 +15,7 @@ require __DIR__.'/./core/runtime.php';
 require __DIR__.'/./core/state.php';
 require __DIR__.'/./core/action.php';
 require __DIR__.'/./core/render.php';
+require __DIR__ . '/./core/compiler.php';
 require __DIR__.'/./core/event.php';
 require __DIR__ . '/./core/listeners.php';
 require __DIR__.'/./includes/helpers.php';
@@ -99,4 +100,4 @@ if (!file_exists($page)) {
 }
 
 // Load and render the page
-require $page;
+render_page($page);

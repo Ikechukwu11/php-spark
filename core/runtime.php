@@ -2,7 +2,9 @@
 // -------------------- SPARK COMPONENT --------------------
 function spark_component(string $name, array $snapshot = [], array $options = []): string
 {
+
     $lazy = normalize_lazy($options);
+
 
     // If lazy, render placeholder and defer actual component
     if ($lazy) {
@@ -39,8 +41,11 @@ function normalize_lazy(array $options): ?array
     if (!isset($options['lazy'])) return null;
 
     // true = default lazy mode
-    if ($options['lazy'] === true) {
-        return ['on' => 'idle'];
+    if ($options['lazy'] === true || $options['lazy'] === 'true') {
+        if(!isset($options['on'])) {
+            $options['on'] = 'idle'; // default trigger
+        }
+        return $options;
     }
 
     // string = specify trigger
@@ -49,7 +54,7 @@ function normalize_lazy(array $options): ?array
     }
 
     // array = custom config
-    return $options['lazy'];
+    return $options;
 }
 
 // -------------------- LAZY PLACEHOLDER --------------------
@@ -83,7 +88,7 @@ function spark_lazy_placeholder(string $component, array $snapshot, array $lazy)
     } else {
         // 2️⃣ Fallback skeletons
         $type  = $lazy['skeletonType'] ?? 'default';
-        $count = $lazy['skeletonCount'] ?? 1;
+        $count = isset($lazy['skeletonCount']) ? intval($lazy['skeletonCount']) : 1;
 
         $skeletonHtml = '';
 
